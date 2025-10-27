@@ -1,0 +1,70 @@
+<Window x:Class="ScaffGuard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScaffGuard"
+        mc:Ignorable="d"
+        Title="ScaffGuard - مدیر یادآوری داربست" Height="720" Width="1100" WindowStartupLocation="CenterScreen">
+  <DockPanel>
+    <StatusBar DockPanel.Dock="Bottom">
+      <StatusBarItem>
+        <TextBlock Text="{Binding NowTehran}" FontWeight="Bold"/>
+      </StatusBarItem>
+      <StatusBarItem>
+        <TextBlock Text="{Binding TodayJalali}"/>
+      </StatusBarItem>
+      <StatusBarItem HorizontalAlignment="Right">
+        <TextBlock Text="تمام داده‌ها به‌صورت خودکار ذخیره می‌شوند."/>
+      </StatusBarItem>
+    </StatusBar>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="280"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <!-- Sidebar -->
+      <StackPanel Background="#fafafa" Grid.Column="0">
+        <TextBlock Text="ماژول‌ها" Margin="12" FontSize="18" FontWeight="Bold"/>
+        <ItemsControl ItemsSource="{Binding Modules}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Margin="6" Padding="8" CornerRadius="8" Background="{Binding IsSelected, Converter={StaticResource {x:Static System:BooleanBoxes.TrueBox}}, ConverterParameter=#e0f2fe}">
+                <DockPanel>
+                  <Button Content="{Binding Title}" Command="{Binding DataContext.SelectModuleCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding Id}" DockPanel.Dock="Left"/>
+                  <Border Background="#ef4444" CornerRadius="10" Padding="6,2" HorizontalAlignment="Right" DockPanel.Dock="Right" Visibility="{Binding DueCountVisibility}">
+                    <TextBlock Foreground="White" FontWeight="Bold" Text="{Binding DueCount}"/>
+                  </Border>
+                </DockPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Separator/>
+        <StackPanel Orientation="Horizontal" Margin="8">
+          <Button Content="افزودن ماژول" Command="{Binding AddModuleCommand}"/>
+          <Button Content="ریست همه" Margin="8,0,0,0" Command="{Binding ResetAllCommand}"/>
+        </StackPanel>
+      </StackPanel>
+
+      <!-- Main content -->
+      <DockPanel Grid.Column="1" Margin="12">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+          <TextBox Width="260" Margin="0,0,8,0" PlaceholderText="جست‌وجو..." Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+          <Button Content="افزودن کار" Command="{Binding AddTaskCommand}"/>
+          <Button Content="چاپ گزارش" Margin="8,0,0,0" Command="{Binding PrintReportCommand}"/>
+          <Button Content="خروجی PDF" Margin="8,0,0,0" Command="{Binding ExportPdfCommand}"/>
+          <Button Content="ریست ماژول" Margin="8,0,0,0" Command="{Binding ResetModuleCommand}"/>
+        </StackPanel>
+        <DataGrid ItemsSource="{Binding FilteredTasks}" AutoGenerateColumns="False" Margin="0,8,0,0" IsReadOnly="False" CanUserAddRows="False">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="عنوان" Binding="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="2*"/>
+            <DataGridTextColumn Header="توضیحات" Binding="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="3*"/>
+            <DataGridTextColumn Header="تاریخ سررسید (شمسی)" Binding="{Binding DueDateJalali, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+            <DataGridCheckBoxColumn Header="انجام شد" Binding="{Binding IsDone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+          </DataGrid.Columns>
+        </DataGrid>
+      </DockPanel>
+    </Grid>
+  </DockPanel>
+</Window>
